@@ -42,7 +42,7 @@ pre{margin:0;padding:12px 14px;background:var(--panel);border:1px solid var(--li
 const events = [], calls = [], open = new Map();
 let selected = null, stderr = [], session = null;
 const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pretty = v => v === undefined ? '<span class="note">none</span>' : esc(JSON.stringify(v, null, 2))
   .replace(/(&quot;|")((?:\\\\.|[^"\\\\])*)"(\\s*:)?/g, (m, q, s, colon) => colon ? '<span class="k">"' + s + '"</span>' + colon : '<span class="s">"' + s + '"</span>')
   .replace(/\\b(-?\\d+(?:\\.\\d+)?)\\b(?![^<]*<\\/span>)/g, '<span class="n">$1</span>');
@@ -59,7 +59,7 @@ function add(ev) {
 function status(c) {
   if (c.notification) return ['note', 'notify'];
   if (c.pending) return ['pend', 'waiting'];
-  if (c.error) return ['err', 'error ' + c.error.code];
+  if (c.error) return ['err', 'error ' + esc(c.error.code)];
   if (c.result?.isError) return ['err', 'tool error'];
   return ['ok', 'ok'];
 }

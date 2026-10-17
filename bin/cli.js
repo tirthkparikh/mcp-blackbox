@@ -92,7 +92,8 @@ try {
     const code = await exited;
     await recorder.close();
     await viewer?.close();
-    process.exit(typeof code === 'number' ? code : 1);
+    // Let queued writes to a pipe finish before exiting.
+    process.stdout.write('', () => process.exit(typeof code === 'number' ? code : 1));
   } else if (command === 'ls') {
     const dir = sessionsDir();
     let files = [];
@@ -100,19 +101,19 @@ try {
     if (!files.length) { console.log(`No sessions yet in ${dir}`); process.exit(0); }
     const rows = await Promise.all(files.map(async f => {
       const s = await stat(join(dir, f));
-      const calls = pairCalls(await readSession(join(dir, f))).filter(c => !c.notification);
+      const calls = pairCalls(await readSession(join(dir, f), { onBadLine: n => say(`skipped bad line ${n} in ${f}`) })).filter(c => !c.notification);
       return { f, m: s.mtimeMs, calls: calls.length, errors: calls.filter(c => c.error || c.toolError).length };
     }));
     for (const r of rows.sort((a, b) => b.m - a.m).slice(0, 30)) console.log(`${new Date(r.m).toLocaleString().padEnd(24)} ${String(r.calls).padStart(4)} calls ${String(r.errors).padStart(3)} errors  ${join(dir, r.f)}`);
   } else if (command === 'view') {
     const file = await resolveSession(pos[1]);
-    const events = await readSession(file);
+    const events = await readSession(file, { onBadLine: n => say(`skipped line ${n}: not valid JSON`) });
     const viewer = startViewer({ events, port: Number(flags.port ?? 4300) });
     const a = await viewer.ready;
     console.log(`Viewing ${file}\nOpen http://${a.address}:${a.port}  (Ctrl+C to stop)`);
   } else if (command === 'stats') {
     const file = await resolveSession(pos[1]);
-    const calls = pairCalls(await readSession(file)).filter(c => !c.notification && c.dir === 'c2s');
+    const calls = pairCalls(await readSession(file, { onBadLine: n => say(`skipped line ${n}: not valid JSON`) })).filter(c => !c.notification && c.dir === 'c2s');
     const groups = new Map();
     for (const c of calls) {
       const k = c.tool ? `tool ${c.tool}` : c.method;
@@ -131,7 +132,7 @@ try {
   } else if (command === 'replay') {
     if (!target.length) fail('Usage: mcp-blackbox replay <file|latest> -- <server command> [args…]');
     const file = await resolveSession(pos[1]);
-    const events = await readSession(file);
+    const events = await readSession(file, { onBadLine: n => say(`skipped line ${n}: not valid JSON`) });
     console.log(`Replaying ${file}\nagainst  ${target.join(' ')}\n`);
     const res = await replay(events, {
       command: target[0], args: target.slice(1), timeout: Number(flags.timeout ?? 30000),

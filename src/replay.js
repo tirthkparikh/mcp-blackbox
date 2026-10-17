@@ -109,6 +109,7 @@ export async function replay(events, { command, args = [], env, ignore = [], tim
   ]);
 
   const checks = [];
+  let timeouts = 0;
   try {
     for (const ev of events) {
       if (ev.dir !== 'c2s' || !ev.msg || Array.isArray(ev.msg)) continue;
@@ -136,6 +137,9 @@ export async function replay(events, { command, args = [], env, ignore = [], tim
       checks.push(check);
       onProgress?.(check);
       if (check.diffs?.[0]?.startsWith('server exited')) break;
+      // Two timeouts in a row: the server has stopped answering, so don't wait out every remaining request.
+      timeouts = check.diffs?.[0]?.startsWith('no response') ? timeouts + 1 : 0;
+      if (timeouts >= 2) { checks.push({ method: '(remaining requests)', ok: false, diffs: ['skipped: server stopped responding'] }); break; }
     }
   } finally {
     child.stdin.end();

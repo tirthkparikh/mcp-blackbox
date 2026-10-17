@@ -1,6 +1,5 @@
 // A small MCP server for tests. MODE=changed makes `add` return a different answer.
 import { createInterface } from 'node:readline';
-let counter = 0;
 const send = m => process.stdout.write(JSON.stringify(m) + '\n');
 process.stderr.write('fixture server ready\n');
 createInterface({ input: process.stdin }).on('line', line => {

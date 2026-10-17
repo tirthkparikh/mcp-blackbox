@@ -71,11 +71,12 @@ export function createRecorder({ file, server, redactKeys = [], keepLarge = fals
   };
 }
 
-export async function readSession(file) {
+/** Read a session file. Lines that aren't valid JSON (e.g. cut off when a session was killed) are skipped. */
+export async function readSession(file, { onBadLine } = {}) {
   const lines = (await readFile(file, 'utf8')).split('\n').filter(Boolean);
   const events = [];
   for (const [i, line] of lines.entries()) {
-    try { events.push(JSON.parse(line)); } catch { throw new Error(`${file}:${i + 1}: not valid JSON`); }
+    try { events.push(JSON.parse(line)); } catch { onBadLine?.(i + 1); }
   }
   return events;
 }
