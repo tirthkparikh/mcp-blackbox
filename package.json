@@ -1,6 +1,6 @@
 {
   "name": "@tirthlabs/mcp-blackbox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Flight recorder for MCP servers. Wrap any stdio server to log every call with secrets hidden, watch it live in a web viewer, and replay real sessions as regression tests in CI.",
   "type": "module",
   "bin": {
