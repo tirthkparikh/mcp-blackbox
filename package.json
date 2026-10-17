@@ -1,0 +1,54 @@
+{
+  "name": "@tirthlabs/mcp-blackbox",
+  "version": "1.0.0",
+  "description": "Flight recorder for MCP servers. Wrap any stdio server to log every call with secrets hidden, watch it live in a web viewer, and replay real sessions as regression tests in CI.",
+  "type": "module",
+  "bin": {
+    "mcp-blackbox": "bin/cli.js"
+  },
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "debugging",
+    "inspector",
+    "proxy",
+    "logging",
+    "replay",
+    "regression-testing",
+    "claude",
+    "cursor",
+    "ai-agents",
+    "observability"
+  ],
+  "author": "Tirth Parikh (https://tirthparikh.com)",
+  "homepage": "https://tirthparikh.com/tools/mcp-blackbox/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tirthkparikh/mcp-blackbox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tirthkparikh/mcp-blackbox/issues"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
