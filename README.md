@@ -1,5 +1,7 @@
 # mcp-blackbox
 
+[![npm](https://img.shields.io/npm/v/@tirthlabs/mcp-blackbox?color=c2410c)](https://www.npmjs.com/package/@tirthlabs/mcp-blackbox) [![CI](https://github.com/tirthkparikh/mcp-blackbox/actions/workflows/ci.yml/badge.svg)](https://github.com/tirthkparikh/mcp-blackbox/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@tirthlabs/mcp-blackbox)](LICENSE) · [Live demo](https://tirthparikh.com/tools/mcp-blackbox/)
+
 **A flight recorder for MCP servers.** Put it in front of any stdio MCP server to:
 
 - **see every call** in a live web viewer: request, response, errors and timing
